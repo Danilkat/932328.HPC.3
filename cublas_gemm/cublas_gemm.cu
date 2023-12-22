@@ -25,11 +25,11 @@ T* generate_random_int(int m, int n, int sigma) {
     return A;
 };
 
-void executeCublas(int n, int m, int k, double **A, double **B) {
+void executeCublas(int n, int m, int k, double *A, double *B) {
 	cublasHandle_t cublasH = NULL;
 	cudaStream_t stream = NULL;
-	T* h_A = *A, * h_B = *B, * h_C = (T*)malloc(sizeof(T) * n * m);
-	int lda = k > n ? n : k, ldb = k > m ? m : k, ldc = n;
+	T* h_A = A, * h_B = B, * h_C = (T*)malloc(sizeof(T) * n * m);
+	int lda = n, ldb = k, ldc = n;
 
 	if (n <= 10 && k <= 10 && n <= 10) {
 		printf("A\n");
@@ -48,8 +48,8 @@ void executeCublas(int n, int m, int k, double **A, double **B) {
 	T* d_B = nullptr;
 	T* d_C = nullptr;
 
-	cublasOperation_t transa = n > k ? CUBLAS_OP_T : CUBLAS_OP_N;
-	cublasOperation_t transb = m >= k ? CUBLAS_OP_N : CUBLAS_OP_T;
+	cublasOperation_t transa = CUBLAS_OP_N;
+	cublasOperation_t transb = CUBLAS_OP_N;
 
     /* step 1: create cublas handle, bind a stream */
     CUBLAS_CHECK(cublasCreate(&cublasH));
