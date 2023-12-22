@@ -1,24 +1,17 @@
 #include "cpu_mmul.cuh"
 #include <cstdlib>
 #include <iostream>
+#include <cublas_v2.h>
+#include "./../cublas_utils.h"
 
-void printMatrix(int n, int m, T* A) {clock_t start_time = clock();
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < m; j++) {
-			std::printf("%3.0f ", (A)[i + j * n]);
-		}
-		std::printf("\n");
-	}
-};
-
-T* executeCPU(int n, int m, int k, T* A, T* B) {
+T* executeCPU(int n, int m, int k, T* A, T* B, double* time) {
 	T* C = (T*)malloc(sizeof(T) * n * m);
 	if (n <= SIZE_LIMIT && k <= SIZE_LIMIT && n <= SIZE_LIMIT) {
 		std::printf("A\n");
-		printMatrix(n, k, A);
+		print_matrix(n, k, A, n);
 		std::printf("=====\n");
 		std::printf("B\n");
-		printMatrix(k, m, B);
+		print_matrix(k, m, B, k);
 		std::printf("=====\n");
 	}
 	clock_t start_time = clock();
@@ -40,10 +33,11 @@ T* executeCPU(int n, int m, int k, T* A, T* B) {
 	clock_t end_time = clock();
 	if (n * m <= SIZE_LIMIT * SIZE_LIMIT * OUTPUT_MULTIPLIER) {
 		std::printf("C\n");
-		printMatrix(n, m, C);
+		print_matrix(n, m, C, n);
 		std::printf("=====\n");
 	}
-	double search_time = end_time - start_time;
-	printf("Время выполнения CPU: %d мс.\n\n", search_time);
+	int search_time = end_time - start_time;
+	printf("Время выполнения CPU: %d мс. (%2.3f с.)\n\n", search_time, (double)search_time / CLOCKS_PER_SEC);
+	*time = ((double)search_time);
 	return C;
 };

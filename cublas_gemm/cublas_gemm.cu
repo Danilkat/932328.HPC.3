@@ -27,7 +27,7 @@ T* generate_random_int(int m, int n, int sigma) {
     return A;
 };
 
-T* executeCublas(int n, int m, int k, double *A, double *B) {
+T* executeCublas(int n, int m, int k, double *A, double *B, double* time) {
 	cublasHandle_t cublasH = NULL;
 	cudaStream_t stream = NULL;
 	T* h_A = A, * h_B = B, * h_C = (T*)malloc(sizeof(T) * n * m);
@@ -102,6 +102,7 @@ T* executeCublas(int n, int m, int k, double *A, double *B) {
         printf("=====\n");
     }
     printf("Время выполнения CUBLAS: %f мс.\n\n", milliseconds);
+    *time = milliseconds;
 
     /* free resources */
     CUDA_CHECK(cudaFree(d_A));

@@ -27,7 +27,7 @@ __global__ void gpu_matrix_mult(T* a, T* b, T* c, int m, int n, int k)
     }
 }
 
-T* executeGPU(int n, int m, int k, T* A, T* B) {
+T* executeGPU(int n, int m, int k, T* A, T* B, double* time) {
     T* h_A = A, * h_B = B, * h_C = (T*)malloc(sizeof(T) * m * n);
     int lda = n, ldb = k, ldc = n;
 
@@ -80,11 +80,8 @@ T* executeGPU(int n, int m, int k, T* A, T* B) {
     cudaEventSynchronize(stop);
     float milliseconds = 0;
     cudaEventElapsedTime(&milliseconds, start, stop);
+    *time = milliseconds;
 
-    /*
-     *   C = | 23.0 | 31.0 |
-     *       | 34.0 | 46.0 |
-     */
     if (n * m <= SIZE_LIMIT * SIZE_LIMIT * OUTPUT_MULTIPLIER) {
         printf("C\n");
         print_matrix(n, m, h_C, ldc);
