@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 
-void printMatrix(int n, int m, T* A) {
+void printMatrix(int n, int m, T* A) {clock_t start_time = clock();
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < m; j++) {
 			std::printf("%3.0f ", (A)[i + j * n]);
@@ -21,7 +21,7 @@ T* executeCPU(int n, int m, int k, T* A, T* B) {
 		printMatrix(k, m, B);
 		std::printf("=====\n");
 	}
-
+	clock_t start_time = clock();
 	for (size_t j = 0; j < m; j++)
 	{
 		for (size_t i = 0; i < n; i++)
@@ -37,7 +37,13 @@ T* executeCPU(int n, int m, int k, T* A, T* B) {
 			}
 		}
 	}
-	if (n <= SIZE_LIMIT && k <= SIZE_LIMIT && n <= SIZE_LIMIT) {
+	clock_t end_time = clock();
+	if (n * m <= SIZE_LIMIT * SIZE_LIMIT * OUTPUT_MULTIPLIER) {
+		std::printf("C\n");
 		printMatrix(n, m, C);
+		std::printf("=====\n");
 	}
+	double search_time = end_time - start_time;
+	printf("Время выполнения CPU: %d мс.\n\n", search_time);
+	return C;
 };

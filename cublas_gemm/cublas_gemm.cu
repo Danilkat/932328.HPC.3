@@ -91,17 +91,17 @@ T* executeCublas(int n, int m, int k, double *A, double *B) {
     cudaEventSynchronize(stop);
     float milliseconds = 0;
     cudaEventElapsedTime(&milliseconds, start, stop);
-    printf("Время выполнения CUBLAS: %f мс.\n", milliseconds);
 
     /*
      *   C = | 23.0 | 31.0 |
      *       | 34.0 | 46.0 |
      */
-    if (n * m <= SIZE_LIMIT * SIZE_LIMIT) {
+    if (n * m <= SIZE_LIMIT * SIZE_LIMIT * OUTPUT_MULTIPLIER) {
         printf("C\n");
         print_matrix(n, m, h_C, ldc);
         printf("=====\n");
     }
+    printf("Время выполнения CUBLAS: %f мс.\n\n", milliseconds);
 
     /* free resources */
     CUDA_CHECK(cudaFree(d_A));
@@ -113,4 +113,5 @@ T* executeCublas(int n, int m, int k, double *A, double *B) {
     CUDA_CHECK(cudaStreamDestroy(stream));
 
     CUDA_CHECK(cudaDeviceReset());
+    return h_C;
 }

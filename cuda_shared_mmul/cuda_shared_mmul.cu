@@ -11,62 +11,19 @@
 
 __global__ void gpu_matrix_mult(T* a, T* b, T* c, int m, int n, int k)
 {
-    int row = blockIdx.y * blockDim.y + threadIdx.y;
-    int col = blockIdx.x * blockDim.x + threadIdx.x;
-    int sum = 0;
-    if (col < k && row < m)
+    //row
+    int i = blockIdx.y * blockDim.y + threadIdx.y;
+
+    //col
+    int j = blockIdx.x * blockDim.x + threadIdx.x;
+    T sum = 0;
+    if (j < n && i < m)
     {
-        for (int i = 0; i < n; i++)
+        for (int l = 0; l < k; l++)
         {
-            sum += a[row * n + i] * b[i * k + col];
+            sum += a[j + n * l] * b[l + i * k];
         }
-        c[row * k + col] = sum;
-    }
-}
-
-__global__ void gpu_square_matrix_mult(int* d_a, int* d_b, int* d_result, int n)
-{
-    __shared__ int tile_a[BLOCKSIZE][BLOCKSIZE];
-    __shared__ int tile_b[BLOCKSIZE][BLOCKSIZE];
-
-    int row = blockIdx.y * BLOCKSIZE + threadIdx.y;
-    int col = blockIdx.x * BLOCKSIZE + threadIdx.x;
-    int tmp = 0;
-    int idx;
-
-    for (int sub = 0; sub < gridDim.x; ++sub)
-    {
-        idx = row * n + sub * BLOCKSIZE + threadIdx.x;
-        if (idx >= n * n)
-        {
-            // n may not divisible by BLOCKSIZE
-            tile_a[threadIdx.y][threadIdx.x] = 0;
-        }
-        else
-        {
-            tile_a[threadIdx.y][threadIdx.x] = d_a[idx];
-        }
-
-        idx = (sub * BLOCKSIZE + threadIdx.y) * n + col;
-        if (idx >= n * n)
-        {
-            tile_b[threadIdx.y][threadIdx.x] = 0;
-        }
-        else
-        {
-            tile_b[threadIdx.y][threadIdx.x] = d_b[idx];
-        }
-        __syncthreads();
-
-        for (int k = 0; k < BLOCKSIZE; ++k)
-        {
-            tmp += tile_a[threadIdx.y][k] * tile_b[k][threadIdx.x];
-        }
-        __syncthreads();
-    }
-    if (row < n && col < n)
-    {
-        d_result[row * n + col] = tmp;
+        c[i * n + j] = sum;
     }
 }
 
@@ -123,17 +80,17 @@ T* executeGPU(int n, int m, int k, T* A, T* B) {
     cudaEventSynchronize(stop);
     float milliseconds = 0;
     cudaEventElapsedTime(&milliseconds, start, stop);
-    printf("Время выполнения GPU: %f мс.\n", milliseconds);
 
     /*
      *   C = | 23.0 | 31.0 |
      *       | 34.0 | 46.0 |
      */
-    if (n * m <= SIZE_LIMIT * SIZE_LIMIT) {
+    if (n * m <= SIZE_LIMIT * SIZE_LIMIT * OUTPUT_MULTIPLIER) {
         printf("C\n");
         print_matrix(n, m, h_C, ldc);
         printf("=====\n");
     }
+    printf("Время выполнения GPU: %f мс.\n\n", milliseconds);
 
     /* free resources */
     CUDA_CHECK(cudaFree(d_A));
@@ -141,4 +98,5 @@ T* executeGPU(int n, int m, int k, T* A, T* B) {
     CUDA_CHECK(cudaFree(d_C));
 
     CUDA_CHECK(cudaDeviceReset());
+    return h_C;
 }

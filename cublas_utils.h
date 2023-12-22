@@ -57,7 +57,7 @@
         cublasStatus_t err_ = (err);                                                               \
         if (err_ != CUBLAS_STATUS_SUCCESS) {                                                       \
             std::printf("cublas error %d at %s:%d\n", err_, __FILE__, __LINE__);                   \
-            return;                                                                                \
+            return nullptr;                                                                        \
         }                                                                                          \
     } while (0)
 
@@ -158,7 +158,7 @@ template <> inline void print_matrix(const int& m, const int& n, const float* A,
 template <> inline void print_matrix(const int& m, const int& n, const double* A, const int& lda) {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
-            std::printf("%0.2f ", A[j * lda + i]);
+            std::printf("%3.0f ", A[j * lda + i]);
         }
         std::printf("\n");
     }
