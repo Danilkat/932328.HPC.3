@@ -20,18 +20,18 @@ void executeCPU(int n, int m, int k, T* A, T* B) {
 	printMatrix(k, m, B);
 	std::printf("=====\n");
 
-	for (size_t i = 0; i < n; i++)
+	for (size_t j = 0; j < m; j++)
 	{
-		for (size_t j = 0; j < m; j++)
+		for (size_t i = 0; i < n; i++)
 		{
-			C[i * m + j] = 0;
+			C[j * n + i] = 0;
 			for (size_t l = 0; l < k; l++)
 			{
-				int inda = i * k + l;
-				int indb = l * m + j;
+				int inda = l * n + i;
+				int indb = j * k + l;
 				double a = (A)[inda];
 				double b = (B)[indb];
-				C[i * m + j] += a * b;
+				C[j * n + i] += a * b;
 			}
 		}
 	}

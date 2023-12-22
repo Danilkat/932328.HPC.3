@@ -17,6 +17,11 @@ T* generate_random_int(int m, int n, int sigma) {
         T val = round(A[i] * sigma);
         A[i] = (abs(val) > std::numeric_limits<T>::epsilon()) ? val : 0.0;
     };
+    for (size_t i = 0; i < m*n; i++)
+    {
+        std::printf("%3.0f ", A[i]);
+    }
+    std::printf("\n");
     return A;
 };
 
