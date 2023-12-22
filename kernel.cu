@@ -1,13 +1,11 @@
 ﻿#include <Windows.h>
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
 #include <vector>
-
 #include <stdio.h>
 #include <iostream>
 #include "./cublas_gemm/cublas_gemm.cuh"
 #include "./cpu_mmul/cpu_mmul.cuh"
-
+#include "./cuda_shared_mmul/cuda_shared_mmul.cuh"
+#include "./type.h"
 
 void test() {
     int n = 2, k = 3, m = 2;
@@ -47,16 +45,19 @@ int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
-    /*int n, m, k;
+    int n, m, k;
     std::cout << "n: ";
     std::cin >> n;
     std::cout << "m: ";
     std::cin >> m;
     std::cout << "k: ";
     std::cin >> k;
-    T *A = generate_random_int(n, k, 10);
-    T *B = generate_random_int(k, m, 10);
-    executeCublas(n, m, k, &A, &B);*/
-    test();
+   /* T *A = generate_random_int(n, k, 10);
+    T *B = generate_random_int(k, m, 10);*/
+    T* A = generate_random_int(n, k, 10);
+    T* B = generate_random_int(k, m, 10);
+    executeCPU(n, m, k, A, B);
+    executeCublas(n, m, k, A, B);
+    executeGPU(n, m, k, A, B);
     return 0;
 }

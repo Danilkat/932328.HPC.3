@@ -11,14 +11,16 @@ void printMatrix(int n, int m, T* A) {
 	}
 };
 
-void executeCPU(int n, int m, int k, T* A, T* B) {
+T* executeCPU(int n, int m, int k, T* A, T* B) {
 	T* C = (T*)malloc(sizeof(T) * n * m);
-	std::printf("A\n");
-	printMatrix(n, k, A);
-	std::printf("=====\n");
-	std::printf("B\n");
-	printMatrix(k, m, B);
-	std::printf("=====\n");
+	if (n <= SIZE_LIMIT && k <= SIZE_LIMIT && n <= SIZE_LIMIT) {
+		std::printf("A\n");
+		printMatrix(n, k, A);
+		std::printf("=====\n");
+		std::printf("B\n");
+		printMatrix(k, m, B);
+		std::printf("=====\n");
+	}
 
 	for (size_t j = 0; j < m; j++)
 	{
@@ -35,6 +37,7 @@ void executeCPU(int n, int m, int k, T* A, T* B) {
 			}
 		}
 	}
-
-	printMatrix(n, m, C);
+	if (n <= SIZE_LIMIT && k <= SIZE_LIMIT && n <= SIZE_LIMIT) {
+		printMatrix(n, m, C);
+	}
 };

@@ -79,13 +79,15 @@
   <ItemGroup>
     <CudaCompile Include="cpu_mmul\cpu_mmul.cu" />
     <CudaCompile Include="cublas_gemm\cublas_gemm.cu" />
+    <CudaCompile Include="cuda_shared_mmul\cuda_shared_mmul.cu" />
     <CudaCompile Include="kernel.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cpu_mmul\cpu_mmul.cuh" />
+    <ClInclude Include="cublas_utils.h" />
+    <ClInclude Include="cuda_shared_mmul\cuda_shared_mmul.cuh" />
     <ClInclude Include="type.h" />
     <ClInclude Include="cublas_gemm\cublas_gemm.cuh" />
-    <ClInclude Include="cublas_utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

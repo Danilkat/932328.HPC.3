@@ -1,12 +1,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
-
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
+#include "device_launch_parameters.h"
+#include "./cublas_gemm.cuh"
+#include "./../cublas_utils.h"
 
-#include "../cublas_utils.h"
-#include "cublas_gemm.cuh"
 
 T* generate_random_int(int m, int n, int sigma) {
     T* A = (T*)malloc(sizeof(T) * m * n);
@@ -17,21 +17,23 @@ T* generate_random_int(int m, int n, int sigma) {
         T val = round(A[i] * sigma);
         A[i] = (abs(val) > std::numeric_limits<T>::epsilon()) ? val : 0.0;
     };
-    for (size_t i = 0; i < m*n; i++)
-    {
-        std::printf("%3.0f ", A[i]);
+    if (m * n <= SIZE_LIMIT * SIZE_LIMIT) {
+        for (size_t i = 0; i < m*n; i++)
+        {
+            std::printf("%3.0f ", A[i]);
+        }
+        std::printf("\n");
     }
-    std::printf("\n");
     return A;
 };
 
-void executeCublas(int n, int m, int k, double *A, double *B) {
+T* executeCublas(int n, int m, int k, double *A, double *B) {
 	cublasHandle_t cublasH = NULL;
 	cudaStream_t stream = NULL;
 	T* h_A = A, * h_B = B, * h_C = (T*)malloc(sizeof(T) * n * m);
 	int lda = n, ldb = k, ldc = n;
 
-	if (n <= 10 && k <= 10 && n <= 10) {
+	if (n <= SIZE_LIMIT && k <= SIZE_LIMIT && n <= SIZE_LIMIT) {
 		printf("A\n");
 		print_matrix<T>(n, k, h_A, lda);
 		printf("=====\n");
@@ -89,13 +91,13 @@ void executeCublas(int n, int m, int k, double *A, double *B) {
     cudaEventSynchronize(stop);
     float milliseconds = 0;
     cudaEventElapsedTime(&milliseconds, start, stop);
-    printf("Время выполнения GPU: %f мс.\n", milliseconds);
+    printf("Время выполнения CUBLAS: %f мс.\n", milliseconds);
 
     /*
      *   C = | 23.0 | 31.0 |
      *       | 34.0 | 46.0 |
      */
-    if (n * m <= 100) {
+    if (n * m <= SIZE_LIMIT * SIZE_LIMIT) {
         printf("C\n");
         print_matrix(n, m, h_C, ldc);
         printf("=====\n");

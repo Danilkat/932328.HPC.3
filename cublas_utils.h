@@ -27,7 +27,8 @@
  */
 
 #pragma once
-
+#ifndef GRANDPARENT_H
+#define GRANDPARENT_H
 #include <cmath>
 #include <functional>
 #include <iostream>
@@ -69,7 +70,7 @@ static const size_t device_alignment = 32;
 // type traits
 template <typename T> struct traits;
 
-template <> struct traits<float> {
+template <> inline struct traits<float> {
     // scalar type
     typedef float T;
     typedef T S;
@@ -86,7 +87,7 @@ template <> struct traits<float> {
     inline static T mul(T v, double f) { return v * f; }
 };
 
-template <> struct traits<double> {
+template <> inline struct traits<double> {
     // scalar type
     typedef double T;
     typedef T S;
@@ -103,7 +104,7 @@ template <> struct traits<double> {
     inline static T mul(T v, double f) { return v * f; }
 };
 
-template <> struct traits<cuFloatComplex> {
+template <> inline struct traits<cuFloatComplex> {
     // scalar type
     typedef float S;
     typedef cuFloatComplex T;
@@ -123,7 +124,7 @@ template <> struct traits<cuFloatComplex> {
     inline static T mul(T v, double f) { return make_cuFloatComplex(v.x * f, v.y * f); }
 };
 
-template <> struct traits<cuDoubleComplex> {
+template <> inline struct traits<cuDoubleComplex> {
     // scalar type
     typedef double S;
     typedef cuDoubleComplex T;
@@ -143,9 +144,9 @@ template <> struct traits<cuDoubleComplex> {
     inline static T mul(T v, double f) { return make_cuDoubleComplex(v.x * f, v.y * f); }
 };
 
-template <typename T> void print_matrix(const int& m, const int& n, const T* A, const int& lda);
+template <typename T> inline void print_matrix(const int& m, const int& n, const T* A, const int& lda);
 
-template <> void print_matrix(const int& m, const int& n, const float* A, const int& lda) {
+template <> inline void print_matrix(const int& m, const int& n, const float* A, const int& lda) {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             std::printf("%0.2f ", A[j * lda + i]);
@@ -154,7 +155,7 @@ template <> void print_matrix(const int& m, const int& n, const float* A, const 
     }
 }
 
-template <> void print_matrix(const int& m, const int& n, const double* A, const int& lda) {
+template <> inline void print_matrix(const int& m, const int& n, const double* A, const int& lda) {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             std::printf("%0.2f ", A[j * lda + i]);
@@ -163,7 +164,7 @@ template <> void print_matrix(const int& m, const int& n, const double* A, const
     }
 }
 
-template <> void print_matrix(const int& m, const int& n, const cuComplex* A, const int& lda) {
+template <> inline void print_matrix(const int& m, const int& n, const cuComplex* A, const int& lda) {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             std::printf("%0.2f + %0.2fj ", A[j * lda + i].x, A[j * lda + i].y);
@@ -173,7 +174,7 @@ template <> void print_matrix(const int& m, const int& n, const cuComplex* A, co
 }
 
 template <>
-void print_matrix(const int& m, const int& n, const cuDoubleComplex* A, const int& lda) {
+inline void print_matrix(const int& m, const int& n, const cuDoubleComplex* A, const int& lda) {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             std::printf("%0.2f + %0.2fj ", A[j * lda + i].x, A[j * lda + i].y);
@@ -182,37 +183,37 @@ void print_matrix(const int& m, const int& n, const cuDoubleComplex* A, const in
     }
 }
 
-template <typename T> void print_vector(const int& m, const T* A);
+template <typename T> inline void print_vector(const int& m, const T* A);
 
-template <> void print_vector(const int& m, const float* A) {
+template <> inline void print_vector(const int& m, const float* A) {
     for (int i = 0; i < m; i++) {
         std::printf("%0.2f ", A[i]);
     }
     std::printf("\n");
 }
 
-template <> void print_vector(const int& m, const double* A) {
+template <> inline void print_vector(const int& m, const double* A) {
     for (int i = 0; i < m; i++) {
         std::printf("%0.2f ", A[i]);
     }
     std::printf("\n");
 }
 
-template <> void print_vector(const int& m, const cuComplex* A) {
+template <> inline void print_vector(const int& m, const cuComplex* A) {
     for (int i = 0; i < m; i++) {
         std::printf("%0.2f + %0.2fj ", A[i].x, A[i].y);
     }
     std::printf("\n");
 }
 
-template <> void print_vector(const int& m, const cuDoubleComplex* A) {
+template <> inline void print_vector(const int& m, const cuDoubleComplex* A) {
     for (int i = 0; i < m; i++) {
         std::printf("%0.2f + %0.2fj ", A[i].x, A[i].y);
     }
     std::printf("\n");
 }
 
-template <typename T> void generate_random_matrix(int m, int n, T** A, int* lda) {
+template <typename T> inline void generate_random_matrix(int m, int n, T** A, int* lda) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<typename traits<T>::S> dis(-1.0, 1.0);
@@ -240,7 +241,7 @@ template <typename T> void generate_random_matrix(int m, int n, T** A, int* lda)
 }
 
 // Makes matrix A of size mxn and leading dimension lda diagonal dominant
-template <typename T> void make_diag_dominant_matrix(int m, int n, T* A, int lda) {
+template <typename T> inline void make_diag_dominant_matrix(int m, int n, T* A, int lda) {
     for (int i = 0; i < std::min(m, n); ++i) {
         T* A_row = A + lda * i;
         auto row_sum = traits<typename traits<T>::S>::zero;
@@ -253,7 +254,7 @@ template <typename T> void make_diag_dominant_matrix(int m, int n, T* A, int lda
 
 // Returns cudaDataType value as defined in library_types.h for the string
 // containing type name
-cudaDataType get_cuda_library_type(std::string type_string) {
+inline cudaDataType get_cuda_library_type(std::string type_string) {
     if (type_string.compare("CUDA_R_16F") == 0)
         return CUDA_R_16F;
     else if (type_string.compare("CUDA_C_16F") == 0)
@@ -285,4 +286,4 @@ cudaDataType get_cuda_library_type(std::string type_string) {
     else
         throw std::runtime_error("Unknown CUDA datatype");
 }
-
+#endif

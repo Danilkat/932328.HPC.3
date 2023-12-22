@@ -3,9 +3,12 @@
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />
     <CudaCompile Include="cpu_mmul\cpu_mmul.cu" />
+    <CudaCompile Include="cuda_shared_mmul\cuda_shared_mmul.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="type.h" />
     <ClInclude Include="cpu_mmul\cpu_mmul.cuh" />
+    <ClInclude Include="cuda_shared_mmul\cuda_shared_mmul.cuh" />
+    <ClInclude Include="cublas_utils.h" />
   </ItemGroup>
 </Project>
